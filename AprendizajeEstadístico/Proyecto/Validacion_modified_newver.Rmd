@@ -1,0 +1,339 @@
+---
+title: "Validacion"
+author: ""
+date: ""
+output: html_document
+---
+
+**Problema**:
+
+Que metodos de validacion y metricas pueden predecir si un paciente ira a la sala de emergencia?
+
+```{r}
+library(caret)
+
+CleanData <-  read.csv("./HarmonyHealthcareData.csv", stringsAsFactors = FALSE)
+
+#names(CleanData)
+#View(CleanData)
+
+#print first 5 columns
+print(colnames(CleanData)[1:5])
+#colnames(CleanData)
+
+set.seed(42)
+
+#To later evaluate with confusion matrix, we are portioning the orginal dataset with 80% and 20%
+# p = 0.8 means 80% for training, list = FALSE returns indices
+train_indices <- createDataPartition(CleanData$Admission, p = 0.80, list = FALSE)
+
+# Create the new training dataset
+new_train_data <- CleanData[train_indices, ]
+
+# Create the new test dataset 
+new_test_data <- CleanData[-train_indices, ]
+
+
+print("Proportions of Admission in new_train_data:")
+print(prop.table(table(new_train_data$Admission)))
+
+print("Proportions of Admission in new_test_data:")
+print(prop.table(table(new_test_data$Admission)))
+
+#Need to create a factor datatype (categorical) instead of character
+new_train_data$Admission <- factor(new_train_data$Admission, levels = c("No", "Yes"))
+new_test_data$Admission <- factor(new_test_data$Admission, levels = c("No", "Yes"))
+
+levels(new_train_data$Admission)
+levels(new_test_data$Admission)
+```
+
+
+Los variables idendificados son:
+
+Before we go forward, these were the features outlined by Team 2:
+
+Patient.HCC.Risk.Total.Risk, 
+Active.Medications, 
+Primary.Care.Encounter.Count, SDOH.Assessment.Count, Patient.Appointment.No.Show.Rate, Depression.Screening.Count.Past.Yr, eGFR.Result, Most.Recent.BMI.Value, UDS.Qualifying.Encounter.Result, COVID.19.Immunization.Code, Fasting.Glucose.Test.Result.
+
+The following R Code chunk ensures that expected columns are in the csv file
+
+```{r}
+expected_cols <- c(
+  "Patient.HCC.Risk.Total.Risk", "Active.Medications", "Primary.Care.Encounter.Count",
+  "SDOH.Assessment.Count", "Patient.Appointment.No.Show.Rate..", "Depression.Screening.Count.Past.Yr",
+  "eGFR.Result", "Most.Recent.BMI.Value", "UDS.Qualifying.Encounter.Count",
+  "COVID.19.Immunization.Code", "Fasting.Glucose.Test.Result"
+)
+
+cat("All columns exist", all(expected_cols %in% colnames(new_train_data)), "\n")
+
+# This shows us which ones don't exit if previous line was false
+setdiff(expected_cols, colnames(CleanData))
+
+class(new_train_data$Admission)
+```
+**Metodos de validacion y tecnicas**
+
+Tenemos un total de 11 variables, y para la clase que vamos a predecir es la variable `Admission` que tiene un valor binario de Yes o No, indicando si el paciente fue admitido al Departamento de Emergencia (ED)
+
+Como nuestro metodo de validacion, vamos a utilizar K Fold Cross Validation, y para nuestras tecnicas de validacion nos enfocaremos en Recall (Especificidad y Sensibilidad) y AUC (Area Bajo la Curva ROC) 
+
+Recall es una medida de la capacidad del modelo para identificar correctamente las instancias positivas. En este caso, se refiere a la proporción de pacientes que fueron admitidos al Departamento de Emergencia (ER) y que el modelo identificó correctamente como tales.
+
+sensitivity (también conocido como recall o tasa de verdaderos positivos) es la proporción de verdaderos positivos (pacientes admitidos correctamente identificados por el modelo) sobre el total de casos positivos reales (todos los pacientes admitidos al ER).
+
+specificity es la proporción de verdaderos negativos (pacientes no admitidos correctamente identificados por el modelo) sobre el total de casos negativos reales (todos los pacientes no admitidos al ER).
+
+ROC (Receiver Operating Characteristic) es una curva que muestra la relación entre la tasa de verdaderos positivos (sensibilidad) y la tasa de falsos positivos a diferentes umbrales de decisión. El área bajo la curva ROC (AUC) mide la capacidad del modelo para distinguir entre las clases positivas y negativas.
+
+
+```{r}
+table(new_train_data$Admission)
+```
+
+Como la cantidad de datos que favorece que un paciente no vaya al ER es mayor que ir al ER, vamos a utilizar la funcion smote del paquete themis para abordar nuestro problema de datos desbalanceados
+
+De acuerdo con la documentacion, SMOTE genera nuevos ejemplos de la clase minoritaria utilizando los vecinos más cercanos de los casos minoritarios existentes. En nuestro caso, crea muestras sintéticas de la clase "Yes" al encontrar valores de predictores similares, ayudando a equilibrar el conjunto de datos y mejorar el rendimiento del modelo.
+
+
+**K Fold Cross Validation**
+
+```{r}
+library(themis)
+library(caret)
+library(leaps)
+cv <- trainControl(
+  method = "cv",
+  number = 5,
+  classProbs = TRUE,
+  summaryFunction = twoClassSummary,
+  savePredictions = "final"
+)
+
+set.seed(123)
+
+#Important Features From Team 2
+#Patient.HCC.Risk.Total.Risk+Active.Medications+Primary.Care.Encounter.Count+SDOH.Assessment.Count+Patient.Appointment.No.Show.Rate+Depression.Screening.Count.Past.Yr+eGFR.Result+Most.Recent.BMI.Value+UDS.Qualifying.Encounter.Result+COVID.19.Immunization.Code+Fasting.Glucose.Test.Result
+
+#model_cv_ <- train(
+ # Admission ~ Patient.HCC.Risk.Total.Risk + Active.Medications +
+  #  Primary.Care.Encounter.Count + SDOH.Assessment.Count +
+   # Patient.Appointment.No.Show.Rate.. + Depression.Screening.Count.Past.Yr +
+  #  eGFR.Result + Most.Recent.BMI.Value + UDS.Qualifying.Encounter.Count +
+   # COVID.19.Immunization.Code + Fasting.Glucose.Test.Result,
+#  data = new_train_data,
+ # method = "glm",
+#  family = binomial(), 
+#  trControl = cv,
+#  metric = "ROC", 
+#  na.action = na.omit
+#)
+#print(model_cv_)
+
+regfit.full <- regsubsets(Admission ~ Patient.HCC.Risk.Total.Risk + Active.Medications +
+    Primary.Care.Encounter.Count + SDOH.Assessment.Count +
+    Patient.Appointment.No.Show.Rate.. + Depression.Screening.Count.Past.Yr +
+    eGFR.Result + Most.Recent.BMI.Value + UDS.Qualifying.Encounter.Count +
+    COVID.19.Immunization.Code + Fasting.Glucose.Test.Result,
+  data = new_train_data,
+    nvmax = 137)
+reg.summary <- summary(regfit.bwd)
+
+plot.new()
+plot(reg.summary$cp, xlab = "Number of Variables",
+    ylab = "Cp", type = "l")
+which.min(reg.summary$cp)
+points(7, reg.summary$cp[7], col = "red", cex = 2,
+    pch = 20)
+
+which.min(reg.summary$bic)
+plot(reg.summary$bic, xlab = "Number of Variables",
+    ylab = "BIC", type = "l")
+points(4, reg.summary$bic[4], col = "red", cex = 2,
+    pch = 20)
+
+which.max(reg.summary$adjr2)
+plot(reg.summary$adjr2, xlab = "Number of Variables",
+    ylab = "Adjusted RSq", type = "l")
+points(8, reg.summary$adjr2[8], col = "red", cex = 2, 
+    pch = 20)
+
+
+```
+```{r}
+plot(regfit.full, scale = "r2")
+plot(regfit.full, scale = "adjr2")
+plot(regfit.full, scale = "Cp")
+plot(regfit.full, scale = "bic")
+```
+
+
+
+
+## Predicting with regsubsets
+```{r}
+predict.regsubsets <- function(object, newdata, id, ...) {
+  form <- as.formula(object$call[[2]])
+  mat <- model.matrix(form, newdata)
+  coefi <- coef(object, id = id)
+  xvars <- names(coefi)
+  mat[, xvars] %*% coefi
+ }
+```
+
+```{r}
+k <- 10
+n <- nrow(new_train_data)
+set.seed(1)
+folds <- sample(rep(1:k, length = n))
+cv.errors <- matrix(NA, k, 137,
+    dimnames = list(NULL, paste(1:137)))
+```
+
+
+```{r}
+for (j in 1:k) {
+  best.fit <- regsubsets(Admission ~ Patient.HCC.Risk.Total.Risk + Active.Medications +
+    Primary.Care.Encounter.Count + SDOH.Assessment.Count +
+    Patient.Appointment.No.Show.Rate.. + Depression.Screening.Count.Past.Yr +
+    eGFR.Result + Most.Recent.BMI.Value + UDS.Qualifying.Encounter.Count +
+    COVID.19.Immunization.Code + Fasting.Glucose.Test.Result,
+       data = new_train_data[folds != j, ],
+       nvmax = 137)
+  for (i in 1:137) {
+    pred <- predict(best.fit, new_train_data[folds != j, ], id = i)
+    cv.errors[j, i] <-
+         mean((new_train_data$Admission ~ Patient.HCC.Risk.Total.Risk + Active.Medications +
+    Primary.Care.Encounter.Count + SDOH.Assessment.Count +
+    Patient.Appointment.No.Show.Rate.. + Depression.Screening.Count.Past.Yr +
+    eGFR.Result + Most.Recent.BMI.Value + UDS.Qualifying.Encounter.Count +
+    COVID.19.Immunization.Code + Fasting.Glucose.Test.Result[folds == j] - pred)^2)
+   }
+ }
+```
+
+**Creando una matrix de confusion**
+```{r}
+full_pred_raw <- predict(regfit.bwd, newdata = new_test_data)
+
+desired_levels <- c("No","Yes")
+
+# Turning both to a factor
+pred <- factor(full_pred_raw,    levels = desired_levels)
+obs  <- factor(new_test_data$Admission, levels = desired_levels)
+
+# create confusion matrix, with data as pred, and values to be checked as reference, with "Yes" indicating correctly identifying the positive class as Went To ER
+cm <- confusionMatrix(
+  data      = pred,
+  reference = obs,
+  positive  = "Yes"
+)
+#Yes = WentToER, No = DidNotGoToER
+
+cm_df <- as.data.frame(cm$table)
+
+names(cm_df) <- c("Actual","Predicted","Count")
+
+ggplot(cm_df, aes(x=Predicted, y=Actual, fill=Count)) +
+  geom_tile() +
+  geom_text(aes(label=Count), size=5) +
+  scale_fill_gradient(
+    low  = "yellow",
+    high = "red"
+  ) +
+  labs(
+    title = "Confusion Matrix [No Resampling]",
+    x     = "Predicted class",
+    y     = "Actual class",
+    fill  = "Count"
+  ) +
+  theme_minimal()
+BIC(full_pred_raw)
+```
+
+
+Now we will be using the SMOTE resampling technqiue
+
+**K Fold Cross Validation With Resampling**
+```{r}
+library(themis)
+library(caret)
+
+cv_smote_def <- trainControl(
+  method = "cv",
+  number = 5,
+  classProbs = TRUE,
+  summaryFunction = twoClassSummary,
+  sampling = "smote",
+  savePredictions = "final"
+  )
+
+set.seed(123)
+
+#Important Features From Team 2
+#Patient.HCC.Risk.Total.Risk+Active.Medications+Primary.Care.Encounter.Count+SDOH.Assessment.Count+Patient.Appointment.No.Show.Rate+Depression.Screening.Count.Past.Yr+eGFR.Result+Most.Recent.BMI.Value+UDS.Qualifying.Encounter.Result+COVID.19.Immunization.Code+Fasting.Glucose.Test.Result
+
+model_cv_smote <- train(
+  Admission ~ Patient.HCC.Risk.Total.Risk + Active.Medications +
+    Primary.Care.Encounter.Count + SDOH.Assessment.Count +
+    Patient.Appointment.No.Show.Rate.. + Depression.Screening.Count.Past.Yr +
+    eGFR.Result + Most.Recent.BMI.Value + UDS.Qualifying.Encounter.Count +
+    COVID.19.Immunization.Code + Fasting.Glucose.Test.Result,
+  data = new_train_data,
+  method = "glm",
+  family = binomial(), 
+  trControl = cv_smote_def,
+  metric = "ROC", 
+  na.action = na.omit
+)
+
+
+print(model_cv_smote)
+AIC(model_cv_smote)
+```
+
+
+**Creating Confusion Matrix for With SMOTE**
+```{r}
+#using same code from earlier
+#use saved model to predict on same Data set to see how it does on the dataset from Team 1
+full_pred_raw <- predict(model_cv_smote, newdata = new_test_data)
+
+desired_levels <- c("No","Yes")
+
+# Turning both to a factor
+pred <- factor(full_pred_raw,    levels = desired_levels)
+obs  <- factor(new_test_data$Admission, levels = desired_levels)
+
+# create confusion matrix, with data as pred, and values to be checked as reference, with "Yes" indicating correctly identifying the positive class as Went To ER
+cm <- confusionMatrix(
+  data      = pred,
+  reference = obs,
+  positive  = "Yes"
+)
+#Yes = WentToER, No = DidNotGoToER
+
+cm_df <- as.data.frame(cm$table)
+
+names(cm_df) <- c("Actual","Predicted","Count")
+
+ggplot(cm_df, aes(x=Predicted, y=Actual, fill=Count)) +
+  geom_tile() +
+  geom_text(aes(label=Count), size=5) +
+  scale_fill_gradient(
+    low  = "yellow",
+    high = "red"
+  ) +
+  labs(
+    title = "Confusion Matrix [With Resampling]",
+    x     = "Predicted class",
+    y     = "Actual class",
+    fill  = "Count"
+  ) +
+  theme_minimal()
+```
+
+
+
