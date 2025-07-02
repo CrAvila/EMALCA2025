@@ -1,0 +1,578 @@
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 1
+Transporte Carlos-Avila
+C o m p i l a t i o n
+
+
+   2   
+   3  Sets
+   4   
+   5  i Almacenes
+   6  j Paises de Destino
+   7  ;
+   8   
+   9  Parameters
+  10  e(i) Existencias en Almacen i
+  11  d(j) Demanda del pais j
+  12  c(i, j) Coste de enviar un Contenedor del Almacen i al Pais j
+  13  ;
+  14   
+  15  Variables
+  16  Q(i, j) Cantidad a enviar del Almacen i al Pais j (Contenedores)
+  17  N(j) Cantidad no Suministrada en el pais j
+  18  ;
+  19   
+  20  Variables
+  21  Z1 Valor del Primer Objetivo
+  22  Z2 Valor del Segundo Objectivo
+  23  ;
+  24   
+  25  Integer Variable Q, N;
+  26   
+  27   
+  28  Equations
+  29  inventario(i) no superar el nivel de inventario
+  30  demanda(j) demanda de cada pais
+  31  objetivo1 demanda no satisfecha
+  32  objetivo2 coste de transporte
+  33  ;
+  34   
+  35  inventario(i).. sum(j, Q(i, j)) =L= e(i);
+  36  demanda(j).. sum(i, Q(i, j)) + N(j) =E= d(j);
+  37  objetivo1.. Z1 =E= sum(j, N(j));
+  38  objetivo2.. Z2 =E= sum((i,j), c(i, j)*Q(i,j));
+  39   
+  40   
+  41  Model Uno /inventario, demanda, objetivo1/;
+  42  Model Dos /all/;
+  43   
+INCLUDE    C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\datos.gms
+  45  Sets
+  46  i Almacenes /Du, Pa, Ca, Gh, It/
+  47  j Paises de Destino /Tu, Si, Su, Ye, Mo, Uc/
+  48  ;
+  49   
+  50  parameters
+  51  e(i) existencias en almacen i /Du 50, Pa 30,Ca 10, Gh 15, It 20/
+  52  d(j) demanda pais j /Tu 20, Si 15, Su 20, Ye 30, Mo 20, Uc 30/
+  53  ;
+  54   
+  55  table c(i,j) Coste de enviar un contenedor de almacen i a pais j
+  56   
+  57      Tu Si  Su Ye  Mo Uc
+  58  Du  1  1.5 3  0.5 4  2
+  59  Pa  10 15  25 8   30 25
+  60  Ca  2  3   4  5   6  3
+  61  Gh  4  6   3  4   4  8
+  62  It  1  1.5 3  2   8  2
+  63   
+  64  Solve Uno minimizing Z1 using MIP;
+  65  Z1.fx=Z1.l;
+  66  solve Dos minimizing Z2 using MIP;
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 2
+Transporte Carlos-Avila
+Include File Summary
+
+
+   SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
+
+     1        1 INPUT          0       0  C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\Transporte.gms
+     2       44 INCLUDE        1      44  .C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\datos.gms
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  50.1.0 12b75dde WEX-WEI
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 3
+Transporte Carlos-Avila
+Equation Listing    SOLVE Uno Using MIP From line 64
+
+
+---- inventario  =L=  no superar el nivel de inventario
+
+inventario(Du)..  Q(Du,Tu) + Q(Du,Si) + Q(Du,Su) + Q(Du,Ye) + Q(Du,Mo) + Q(Du,Uc) =L= 50 ; (LHS = 0)
+     
+inventario(Pa)..  Q(Pa,Tu) + Q(Pa,Si) + Q(Pa,Su) + Q(Pa,Ye) + Q(Pa,Mo) + Q(Pa,Uc) =L= 30 ; (LHS = 0)
+     
+inventario(Ca)..  Q(Ca,Tu) + Q(Ca,Si) + Q(Ca,Su) + Q(Ca,Ye) + Q(Ca,Mo) + Q(Ca,Uc) =L= 10 ; (LHS = 0)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- demanda  =E=  demanda de cada pais
+
+demanda(Tu)..  Q(Du,Tu) + Q(Pa,Tu) + Q(Ca,Tu) + Q(Gh,Tu) + Q(It,Tu) + N(Tu) =E= 20 ; (LHS = 0, INFES = 20 ****)
+     
+demanda(Si)..  Q(Du,Si) + Q(Pa,Si) + Q(Ca,Si) + Q(Gh,Si) + Q(It,Si) + N(Si) =E= 15 ; (LHS = 0, INFES = 15 ****)
+     
+demanda(Su)..  Q(Du,Su) + Q(Pa,Su) + Q(Ca,Su) + Q(Gh,Su) + Q(It,Su) + N(Su) =E= 20 ; (LHS = 0, INFES = 20 ****)
+     
+REMAINING 3 ENTRIES SKIPPED
+
+
+---- objetivo1  =E=  demanda no satisfecha
+
+objetivo1..  - N(Tu) - N(Si) - N(Su) - N(Ye) - N(Mo) - N(Uc) + Z1 =E= 0 ; (LHS = 0)
+     
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 4
+Transporte Carlos-Avila
+Column Listing      SOLVE Uno Using MIP From line 64
+
+
+---- Q  Cantidad a enviar del Almacen i al Pais j (Contenedores)
+
+Q(Du,Tu)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       inventario(Du)
+        1       demanda(Tu)
+
+Q(Du,Si)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       inventario(Du)
+        1       demanda(Si)
+
+Q(Du,Su)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       inventario(Du)
+        1       demanda(Su)
+
+REMAINING 27 ENTRIES SKIPPED
+
+---- N  Cantidad no Suministrada en el pais j
+
+N(Tu)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       demanda(Tu)
+       -1       objetivo1
+
+N(Si)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       demanda(Si)
+       -1       objetivo1
+
+N(Su)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+        1       demanda(Su)
+       -1       objetivo1
+
+REMAINING 3 ENTRIES SKIPPED
+
+---- Z1  Valor del Primer Objetivo
+
+Z1
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       objetivo1
+
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 5
+Transporte Carlos-Avila
+Range Statistics    SOLVE Uno Using MIP From line 64
+
+
+RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
+
+RHS       [min, max] : [ 1.000E+01, 5.000E+01] - Zero values observed as well
+Bound     [min, max] : [        NA,        NA] - Zero values observed as well
+Matrix    [min, max] : [ 1.000E+00, 1.000E+00]
+
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 6
+Transporte Carlos-Avila
+Model Statistics    SOLVE Uno Using MIP From line 64
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           3     SINGLE EQUATIONS           12
+BLOCKS OF VARIABLES           3     SINGLE VARIABLES           37
+NON ZERO ELEMENTS            73     DISCRETE VARIABLES         36
+
+
+GENERATION TIME      =        0.078 SECONDS      4 MB  50.1.0 12b75dde WEX-WEI
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 7
+Transporte Carlos-Avila
+Solution Report     SOLVE Uno Using MIP From line 64
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   Uno                 OBJECTIVE  Z1
+     TYPE    MIP                 DIRECTION  MINIMIZE
+     SOLVER  CPLEX               FROM LINE  64
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      1 Optimal
+**** OBJECTIVE VALUE               10.0000
+
+ RESOURCE USAGE, LIMIT          0.031 10000000000.000
+ ITERATION COUNT, LIMIT         7    2147483647
+*** This solver runs with a demo license. No commercial use.
+--- GMO setup time: 0.00s
+--- GMO memory 0.50 Mb (peak 0.50 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.2.0 link memory 0.00 Mb (peak 0.00 Mb)
+--- Starting Cplex
+
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.03sec (det. 0.14 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 0.02 ticks)
+
+
+Proven optimal solution
+MIP Solution:           10.000000    (7 iterations, 0 nodes)
+Final Solve:            10.000000    (0 iterations)
+
+Best possible:          10.000000
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+
+---- EQU inventario  no superar el nivel de inventario
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+Du        -INF           50.0000        50.0000          .          
+Pa        -INF           30.0000        30.0000          .          
+Ca        -INF           10.0000        10.0000          .          
+Gh        -INF           15.0000        15.0000          .          
+It        -INF           20.0000        20.0000          .          
+
+---- EQU demanda  demanda de cada pais
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+Tu        20.0000        20.0000        20.0000          .          
+Si        15.0000        15.0000        15.0000          .          
+Su        20.0000        20.0000        20.0000          .          
+Ye        30.0000        30.0000        30.0000          .          
+Mo        20.0000        20.0000        20.0000          .          
+Uc        30.0000        30.0000        30.0000          .          
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU objetivo1           .              .              .             1.0000      
+
+  objetivo1  demanda no satisfecha
+
+---- VAR Q  Cantidad a enviar del Almacen i al Pais j (Contenedores)
+
+             LOWER          LEVEL          UPPER         MARGINAL
+
+Du.Tu          .            20.0000        +INF            EPS         
+Du.Si          .            15.0000        +INF            EPS         
+Du.Su          .            15.0000        +INF            EPS         
+Du.Ye          .              .            +INF            EPS         
+Du.Mo          .              .            +INF            EPS         
+Du.Uc          .              .            +INF            EPS         
+Pa.Tu          .              .            +INF            EPS         
+Pa.Si          .              .            +INF            EPS         
+Pa.Su          .             5.0000        +INF            EPS         
+Pa.Ye          .            25.0000        +INF            EPS         
+Pa.Mo          .              .            +INF            EPS         
+Pa.Uc          .              .            +INF            EPS         
+Ca.Tu          .              .            +INF            EPS         
+Ca.Si          .              .            +INF            EPS         
+Ca.Su          .              .            +INF            EPS         
+Ca.Ye          .             5.0000        +INF            EPS         
+Ca.Mo          .             5.0000        +INF            EPS         
+Ca.Uc          .              .            +INF            EPS         
+Gh.Tu          .              .            +INF            EPS         
+Gh.Si          .              .            +INF            EPS         
+Gh.Su          .              .            +INF            EPS         
+Gh.Ye          .              .            +INF            EPS         
+Gh.Mo          .            15.0000        +INF            EPS         
+Gh.Uc          .              .            +INF            EPS         
+It.Tu          .              .            +INF            EPS         
+It.Si          .              .            +INF            EPS         
+It.Su          .              .            +INF            EPS         
+It.Ye          .              .            +INF            EPS         
+It.Mo          .              .            +INF            EPS         
+It.Uc          .            20.0000        +INF            EPS         
+
+---- VAR N  Cantidad no Suministrada en el pais j
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+Tu          .              .            +INF            1.0000      
+Si          .              .            +INF            1.0000      
+Su          .              .            +INF            1.0000      
+Ye          .              .            +INF            1.0000      
+Mo          .              .            +INF            1.0000      
+Uc          .            10.0000        +INF            1.0000      
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR Z1                -INF           10.0000        +INF             .          
+
+  Z1  Valor del Primer Objetivo
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 8
+Transporte Carlos-Avila
+Equation Listing    SOLVE Dos Using MIP From line 66
+
+
+---- inventario  =L=  no superar el nivel de inventario
+
+inventario(Du)..  Q(Du,Tu) + Q(Du,Si) + Q(Du,Su) + Q(Du,Ye) + Q(Du,Mo) + Q(Du,Uc) =L= 50 ; (LHS = 50)
+     
+inventario(Pa)..  Q(Pa,Tu) + Q(Pa,Si) + Q(Pa,Su) + Q(Pa,Ye) + Q(Pa,Mo) + Q(Pa,Uc) =L= 30 ; (LHS = 30)
+     
+inventario(Ca)..  Q(Ca,Tu) + Q(Ca,Si) + Q(Ca,Su) + Q(Ca,Ye) + Q(Ca,Mo) + Q(Ca,Uc) =L= 10 ; (LHS = 10)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- demanda  =E=  demanda de cada pais
+
+demanda(Tu)..  Q(Du,Tu) + Q(Pa,Tu) + Q(Ca,Tu) + Q(Gh,Tu) + Q(It,Tu) + N(Tu) =E= 20 ; (LHS = 20)
+     
+demanda(Si)..  Q(Du,Si) + Q(Pa,Si) + Q(Ca,Si) + Q(Gh,Si) + Q(It,Si) + N(Si) =E= 15 ; (LHS = 15)
+     
+demanda(Su)..  Q(Du,Su) + Q(Pa,Su) + Q(Ca,Su) + Q(Gh,Su) + Q(It,Su) + N(Su) =E= 20 ; (LHS = 20)
+     
+REMAINING 3 ENTRIES SKIPPED
+
+
+---- objetivo1  =E=  demanda no satisfecha
+
+objetivo1..  - N(Tu) - N(Si) - N(Su) - N(Ye) - N(Mo) - N(Uc) + Z1 =E= 0 ; (LHS = 0)
+     
+
+---- objetivo2  =E=  coste de transporte
+
+objetivo2..  - Q(Du,Tu) - 1.5*Q(Du,Si) - 3*Q(Du,Su) - 0.5*Q(Du,Ye) - 4*Q(Du,Mo) - 2*Q(Du,Uc) - 10*Q(Pa,Tu) - 15*Q(Pa,Si) - 25*Q(Pa,Su) - 8*Q(Pa,Ye) - 30*Q(Pa,Mo) - 25*Q(Pa,Uc) - 2*Q(Ca,Tu) - 3*Q(Ca,Si) - 4*Q(Ca,Su) - 5*Q(Ca,Ye) - 6*Q(Ca,Mo) - 3*Q(Ca,Uc) - 4*Q(Gh,Tu) - 6*Q(Gh,Si) - 3*Q(Gh,Su) - 4*Q(Gh,Ye) - 4*Q(Gh,Mo) - 8*Q(Gh,Uc) - Q(It,Tu) - 1.5*Q(It,Si) - 3*Q(It,Su) - 2*Q(It,Ye) - 8*Q(It,Mo) - 2*Q(It,Uc) + Z2 =E= 0 ; (LHS = -567.5, INFES = 567.5 ****)
+     
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 9
+Transporte Carlos-Avila
+Column Listing      SOLVE Dos Using MIP From line 66
+
+
+---- Q  Cantidad a enviar del Almacen i al Pais j (Contenedores)
+
+Q(Du,Tu)
+                (.LO, .L, .UP, .M = 0, 20, +INF, EPS)
+        1       inventario(Du)
+        1       demanda(Tu)
+       -1       objetivo2
+
+Q(Du,Si)
+                (.LO, .L, .UP, .M = 0, 15, +INF, EPS)
+        1       inventario(Du)
+        1       demanda(Si)
+       -1.5     objetivo2
+
+Q(Du,Su)
+                (.LO, .L, .UP, .M = 0, 15, +INF, EPS)
+        1       inventario(Du)
+        1       demanda(Su)
+       -3       objetivo2
+
+REMAINING 27 ENTRIES SKIPPED
+
+---- N  Cantidad no Suministrada en el pais j
+
+N(Tu)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 1)
+        1       demanda(Tu)
+       -1       objetivo1
+
+N(Si)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 1)
+        1       demanda(Si)
+       -1       objetivo1
+
+N(Su)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 1)
+        1       demanda(Su)
+       -1       objetivo1
+
+REMAINING 3 ENTRIES SKIPPED
+
+---- Z1  Valor del Primer Objetivo
+
+Z1
+                (.LO, .L, .UP, .M = 10, 10, 10, 0)
+        1       objetivo1
+
+
+---- Z2  Valor del Segundo Objectivo
+
+Z2
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       objetivo2
+
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 10
+Transporte Carlos-Avila
+Range Statistics    SOLVE Dos Using MIP From line 66
+
+
+RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
+
+RHS       [min, max] : [ 1.000E+01, 5.000E+01] - Zero values observed as well
+Bound     [min, max] : [ 1.000E+01, 1.000E+01] - Zero values observed as well
+Matrix    [min, max] : [ 5.000E-01, 3.000E+01]
+
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 11
+Transporte Carlos-Avila
+Model Statistics    SOLVE Dos Using MIP From line 66
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           4     SINGLE EQUATIONS           13
+BLOCKS OF VARIABLES           4     SINGLE VARIABLES           38
+NON ZERO ELEMENTS           104     DISCRETE VARIABLES         36
+
+
+GENERATION TIME      =        0.000 SECONDS      4 MB  50.1.0 12b75dde WEX-WEI
+GAMS 50.1.0  12b75dde Jun 18, 2025          WEX-WEI x86 64bit/MS Windows - 07/02/25 12:27:55 Page 12
+Transporte Carlos-Avila
+Solution Report     SOLVE Dos Using MIP From line 66
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   Dos                 OBJECTIVE  Z2
+     TYPE    MIP                 DIRECTION  MINIMIZE
+     SOLVER  CPLEX               FROM LINE  66
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      1 Optimal
+**** OBJECTIVE VALUE              452.5000
+
+ RESOURCE USAGE, LIMIT          0.016 10000000000.000
+ ITERATION COUNT, LIMIT         8    2147483647
+*** This solver runs with a demo license. No commercial use.
+--- GMO setup time: 0.00s
+--- GMO memory 0.50 Mb (peak 0.50 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.2.0 link memory 0.00 Mb (peak 0.00 Mb)
+--- Starting Cplex
+
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.02sec (det. 0.14 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 0.02 ticks)
+
+
+Proven optimal solution
+MIP Solution:          452.500000    (8 iterations, 0 nodes)
+Final Solve:           452.500000    (0 iterations)
+
+Best possible:         452.500000
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+
+---- EQU inventario  no superar el nivel de inventario
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+Du        -INF           50.0000        50.0000          .          
+Pa        -INF           30.0000        30.0000          .          
+Ca        -INF           10.0000        10.0000          .          
+Gh        -INF           15.0000        15.0000          .          
+It        -INF           20.0000        20.0000          .          
+
+---- EQU demanda  demanda de cada pais
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+Tu        20.0000        20.0000        20.0000          .          
+Si        15.0000        15.0000        15.0000          .          
+Su        20.0000        20.0000        20.0000          .          
+Ye        30.0000        30.0000        30.0000          .          
+Mo        20.0000        20.0000        20.0000          .          
+Uc        30.0000        30.0000        30.0000          .          
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU objetivo1           .              .              .              .          
+---- EQU objetivo2           .              .              .             1.0000      
+
+  objetivo1  demanda no satisfecha
+  objetivo2  coste de transporte
+
+---- VAR Q  Cantidad a enviar del Almacen i al Pais j (Contenedores)
+
+             LOWER          LEVEL          UPPER         MARGINAL
+
+Du.Tu          .              .            +INF            1.0000      
+Du.Si          .            15.0000        +INF            1.5000      
+Du.Su          .             5.0000        +INF            3.0000      
+Du.Ye          .              .            +INF            0.5000      
+Du.Mo          .              .            +INF            4.0000      
+Du.Uc          .            30.0000        +INF            2.0000      
+Pa.Tu          .              .            +INF           10.0000      
+Pa.Si          .              .            +INF           15.0000      
+Pa.Su          .              .            +INF           25.0000      
+Pa.Ye          .            30.0000        +INF            8.0000      
+Pa.Mo          .              .            +INF           30.0000      
+Pa.Uc          .              .            +INF           25.0000      
+Ca.Tu          .            10.0000        +INF            2.0000      
+Ca.Si          .              .            +INF            3.0000      
+Ca.Su          .              .            +INF            4.0000      
+Ca.Ye          .              .            +INF            5.0000      
+Ca.Mo          .              .            +INF            6.0000      
+Ca.Uc          .              .            +INF            3.0000      
+Gh.Tu          .              .            +INF            4.0000      
+Gh.Si          .              .            +INF            6.0000      
+Gh.Su          .             5.0000        +INF            3.0000      
+Gh.Ye          .              .            +INF            4.0000      
+Gh.Mo          .            10.0000        +INF            4.0000      
+Gh.Uc          .              .            +INF            8.0000      
+It.Tu          .            10.0000        +INF            1.0000      
+It.Si          .              .            +INF            1.5000      
+It.Su          .            10.0000        +INF            3.0000      
+It.Ye          .              .            +INF            2.0000      
+It.Mo          .              .            +INF            8.0000      
+It.Uc          .              .            +INF            2.0000      
+
+---- VAR N  Cantidad no Suministrada en el pais j
+
+          LOWER          LEVEL          UPPER         MARGINAL
+
+Tu          .              .            +INF            EPS         
+Si          .              .            +INF            EPS         
+Su          .              .            +INF            EPS         
+Ye          .              .            +INF            EPS         
+Mo          .            10.0000        +INF            EPS         
+Uc          .              .            +INF            EPS         
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR Z1                10.0000        10.0000        10.0000         EPS         
+---- VAR Z2                -INF          452.5000        +INF             .          
+
+  Z1  Valor del Primer Objetivo
+  Z2  Valor del Segundo Objectivo
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+
+
+EXECUTION TIME       =        0.328 SECONDS      4 MB  50.1.0 12b75dde WEX-WEI
+
+
+USER: GAMS Demo, for EULA and demo limitations see   G250531/0001CB-GEN
+      https://www.gams.com/latest/docs/UG%5FLicense.html         DC0000
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\Transporte.gms
+Output     C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\Transporte.lst

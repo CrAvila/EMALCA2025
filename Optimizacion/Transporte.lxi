@@ -1,0 +1,40 @@
+B 3 C o m p i l a t i o n
+B 73 Include File Summary
+B 85 Equation Listing    SOLVE Uno Using MIP From line 64
+D 88 inventario
+D 99 demanda
+D 110 objetivo1
+B 116 Column Listing      SOLVE Uno Using MIP From line 64
+E 119 Q
+E 138 N
+E 157 Z1
+B 165 Range Statistics    SOLVE Uno Using MIP From line 64
+B 176 Model Statistics    SOLVE Uno Using MIP From line 64
+B 189 Solution Report     SOLVE Uno Using MIP From line 64
+F 232 inventario
+F 242 demanda
+F 255 objetivo1
+G 259 Q
+G 294 N
+G 307 Z1
+B 317 Equation Listing    SOLVE Dos Using MIP From line 66
+D 320 inventario
+D 331 demanda
+D 342 objetivo1
+D 347 objetivo2
+B 353 Column Listing      SOLVE Dos Using MIP From line 66
+E 356 Q
+E 378 N
+E 397 Z1
+E 404 Z2
+B 412 Range Statistics    SOLVE Dos Using MIP From line 66
+B 423 Model Statistics    SOLVE Dos Using MIP From line 66
+B 436 Solution Report     SOLVE Dos Using MIP From line 66
+F 479 inventario
+F 489 demanda
+F 502 objetivo1
+F 503 objetivo2
+G 508 Q
+G 543 N
+G 556 Z1
+G 557 Z2

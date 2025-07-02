@@ -1,0 +1,236 @@
+
+--- Job Transporte.gms Start 07/02/25 12:27:55 50.1.0 12b75dde WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\50\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\Transporte.gms
+    PageSize 0
+    ScrDir C:\Users\Estudiante\Documents\EMALCA2025\Optimizacion\225a\
+    SysDir C:\GAMS\50\
+    LogOption 3
+    AppendLog 1
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: GAMS Demo, for EULA and demo limitations see   G250531/0001CB-GEN
+          https://www.gams.com/latest/docs/UG%5FLicense.html         DC0000
+          C:\GAMS\50\gamslice.txt
+          Demo license for demonstration and instructional purposes only
+System information: 20 physical cores and 32 Gb physical memory detected
+GAMS 50.1.0   Copyright (C) 1987-2025 GAMS Development. All rights reserved
+--- Starting compilation
+--- Transporte.gms(44) 2 Mb
+--- . datos.gms(18) 3 Mb
+--- Transporte.gms(48) 3 Mb
+--- Starting execution: elapsed 0:00:00.003
+--- Generating MIP model Uno
+--- Transporte.gms(64) 4 Mb
+---   12 rows  37 columns  73 non-zeroes
+---   36 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E+01, 5.000E+01] - Zero values observed as well
+--- Bound     [min, max] : [        NA,        NA] - Zero values observed as well
+--- Matrix    [min, max] : [ 1.000E+00, 1.000E+00]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:00.088
+
+IBM ILOG CPLEX   50.1.0 12b75dde Jun 18, 2025          WEI x86 64bit/MS Window
+
+*** This solver runs with a demo license. No commercial use.
+--- GMO setup time: 0.00s
+--- GMO memory 0.50 Mb (peak 0.50 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.2.0 link memory 0.00 Mb (peak 0.00 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd
+CPXPARAM_Advance                                 0
+CPXPARAM_Simplex_Display                         2
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+Generic callback                                 0x50
+Found incumbent of value 10.000000 after 0.00 sec. (0.00 ticks)
+Tried aggregator 1 time.
+MIP Presolve eliminated 0 rows and 1 columns.
+Reduced MIP has 11 rows, 36 columns, and 66 nonzeros.
+Reduced MIP has 0 binaries, 36 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.01 sec. (0.04 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+Reduced MIP has 11 rows, 36 columns, and 66 nonzeros.
+Reduced MIP has 0 binaries, 36 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.04 ticks)
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 28 threads.
+Parallel mode: deterministic, using up to 4 threads for parallel tasks at root LP.
+Tried aggregator 1 time.
+No LP presolve or aggregator reductions.
+Presolve time = 0.00 sec. (0.01 ticks)
+Initializing dual steep norms . . .
+
+Iteration      Dual Objective            In Variable           Out Variable
+     1               0.000000               Q(Gh,Su)   inventario(Du) slack
+     2               0.000000               Q(It,Mo)   inventario(Gh) slack
+     3               0.000000               Q(Gh,Tu)               Q(Gh,Su)
+     4               0.000000               Q(Ca,Uc)   inventario(Ca) slack
+     5               0.000000               Q(It,Si)               Q(Du,Si)
+     6               0.000000               Q(Pa,Ye)   inventario(It) slack
+Root relaxation solution time = 0.00 sec. (0.03 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                           10.0000        0.0000           100.00%
+Found incumbent of value 10.000000 after 0.03 sec. (0.13 ticks)
+      0     0        cutoff             10.0000                      7    0.00%
+
+Root node processing (before b&c):
+  Real time             =    0.03 sec. (0.14 ticks)
+Parallel b&c, 28 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.03 sec. (0.14 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.03sec (det. 0.14 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd
+CPXPARAM_Advance                                 2
+CPXPARAM_Simplex_Display                         2
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+Tried aggregator 1 time.
+LP Presolve eliminated 11 rows and 37 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 0.02 ticks)
+
+
+Proven optimal solution
+MIP Solution:           10.000000    (7 iterations, 0 nodes)
+Final Solve:            10.000000    (0 iterations)
+
+Best possible:          10.000000
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model Uno
+--- Executing after solve: elapsed 0:00:00.306
+--- Transporte.gms(65) 4 Mb
+--- Generating MIP model Dos
+--- Transporte.gms(66) 4 Mb
+---   13 rows  38 columns  104 non-zeroes
+---   36 discrete-columns
+--- Range statistics (absolute non-zero finite values)
+--- RHS       [min, max] : [ 1.000E+01, 5.000E+01] - Zero values observed as well
+--- Bound     [min, max] : [ 1.000E+01, 1.000E+01] - Zero values observed as well
+--- Matrix    [min, max] : [ 5.000E-01, 3.000E+01]
+--- Executing CPLEX (Solvelink=2): elapsed 0:00:00.308
+
+IBM ILOG CPLEX   50.1.0 12b75dde Jun 18, 2025          WEI x86 64bit/MS Window
+
+*** This solver runs with a demo license. No commercial use.
+--- GMO setup time: 0.00s
+--- GMO memory 0.50 Mb (peak 0.50 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.2.0 link memory 0.00 Mb (peak 0.00 Mb)
+--- Starting Cplex
+
+Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd
+CPXPARAM_Advance                                 0
+CPXPARAM_Simplex_Display                         2
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+Generic callback                                 0x50
+Found incumbent of value 567.500000 after 0.00 sec. (0.00 ticks)
+Tried aggregator 1 time.
+MIP Presolve eliminated 0 rows and 2 columns.
+Reduced MIP has 12 rows, 36 columns, and 72 nonzeros.
+Reduced MIP has 0 binaries, 36 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.04 ticks)
+Tried aggregator 1 time.
+Detecting symmetries...
+Reduced MIP has 12 rows, 36 columns, and 72 nonzeros.
+Reduced MIP has 0 binaries, 36 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (0.04 ticks)
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 28 threads.
+Parallel mode: deterministic, using up to 4 threads for parallel tasks at root LP.
+Tried aggregator 1 time.
+No LP presolve or aggregator reductions.
+Presolve time = 0.00 sec. (0.01 ticks)
+Initializing dual steep norms . . .
+
+Iteration      Dual Objective            In Variable           Out Variable
+     1             217.500000                  N(Su)        objetivo1 artif
+     2             217.500000               Q(Du,Uc)   inventario(It) slack
+     3             242.500000                  N(Uc)   inventario(Du) slack
+     4             242.500000               Q(Ca,Uc)   inventario(Ca) slack
+     5             437.500000               Q(Pa,Ye)   inventario(Gh) slack
+     6             452.500000               Q(It,Su)                  N(Uc)
+     7             452.500000               Q(Ca,Su)               Q(Ca,Uc)
+     8             452.500000               Q(Du,Su)               Q(It,Uc)
+Root relaxation solution time = 0.02 sec. (0.03 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                          567.5000        0.0000           100.00%
+Found incumbent of value 567.500000 after 0.02 sec. (0.13 ticks)
+*     0     0      integral     0      452.5000      452.5000        8    0.00%
+Elapsed time = 0.02 sec. (0.14 ticks, tree = 0.00 MB)
+Found incumbent of value 452.500000 after 0.02 sec. (0.14 ticks)
+
+Root node processing (before b&c):
+  Real time             =    0.02 sec. (0.14 ticks)
+Parallel b&c, 28 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.02 sec. (0.14 ticks)
+
+--- MIP status (101): integer optimal solution.
+--- Cplex Time: 0.02sec (det. 0.14 ticks)
+
+--- Returning a primal only solution to GAMS (marginals all set to NA).
+--- Fixing integer variables and solving final LP...
+
+Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd
+CPXPARAM_Advance                                 2
+CPXPARAM_Simplex_Display                         2
+CPXPARAM_MIP_Display                             4
+CPXPARAM_MIP_Pool_Capacity                       0
+CPXPARAM_MIP_Tolerances_AbsMIPGap                0
+Tried aggregator 1 time.
+LP Presolve eliminated 12 rows and 38 columns.
+All rows and columns eliminated.
+Presolve time = 0.00 sec. (0.01 ticks)
+
+--- Fixed MIP status (1): optimal.
+--- Cplex Time: 0.00sec (det. 0.02 ticks)
+
+
+Proven optimal solution
+MIP Solution:          452.500000    (8 iterations, 0 nodes)
+Final Solve:           452.500000    (0 iterations)
+
+Best possible:         452.500000
+Absolute gap:            0.000000
+Relative gap:            0.000000
+
+--- Reading solution for model Dos
+*** Status: Normal completion
+--- Job Transporte.gms Stop 07/02/25 12:27:55 elapsed 0:00:00.337
